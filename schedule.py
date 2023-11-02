@@ -5,12 +5,14 @@ from pydantic import BaseModel
 
 class TransportSchedule(BaseModel): 
 	schedule_id : int
-	name : str
-	license_no : str
-	date_of_birth : str
-	contact_no : str
-	email : str
-	address : str
+	route_name : str
+	departure_location : str
+	arrival_location : str
+	departure_time : str
+	arrival_time : str
+	vehicle_id : int
+	driver_id : int
+	status : str
 
 json_filename="schedule.json"
 
