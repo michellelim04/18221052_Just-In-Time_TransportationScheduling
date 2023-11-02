@@ -1,0 +1,5 @@
+{"schedule": [
+	{"schedule_id":1, "route_name":"YE3", "departure_location": "JakBarHub", "arrival_location": "BandungHub", "departure_time": "2023-09-28 09:00:00", "arrival_time": "2023-09-28 12:00:00", "vehicle_id": 1, "driver_id": 1, "status": "Scheduled"},
+	{"schedule_id":2, "route_name":"XY1", "departure_location": "JakTimHub", "arrival_location": "PurwakartaHub", "departure_time": "2023-09-29 15:30:00", "arrival_time": "2023-09-29 17:00:00", "vehicle_id": 2, "driver_id": 2, "status": "Scheduled"}
+]
+}

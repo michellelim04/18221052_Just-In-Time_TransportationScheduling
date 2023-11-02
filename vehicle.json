@@ -1,0 +1,6 @@
+{"vehicle": [
+	{"vehicle_id":1, "make":"Tata Motors", "model": "Tata Ace", "year": 2005, "registration_no": "11219093"},
+	{"vehicle_id":2, "make":"Tata Motors", "model": "Tata Magic", "year": 2007, "registration_no": "11218492"},
+    {"vehicle_id":3, "make":"Tata Motors", "model": "Tata 407", "year": 1986, "registration_no": "18263601"}
+]
+}
