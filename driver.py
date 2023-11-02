@@ -46,7 +46,6 @@ async def search_drivers(
     matching_drivers = []
 
     for driver in data.get('driver', []):
-        # Check if any parameter matches the driver's attributes, and all other parameters are None
         if (
             (name is None or driver['name'] == name) and
             (license_no is None or driver['license_no'] == license_no) and
