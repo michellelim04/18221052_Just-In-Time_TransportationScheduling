@@ -32,6 +32,15 @@ async def read_vehicle(vehicles_id: int):
 		status_code=404, detail=f'vehicle not found'
 	)
 
+@app.get('/vehicle/search')
+async def read_vehicle(vehicles_id: int = None, make: str = None, model: str = None, year: int = None, registration_no: str = None):
+	for vehicle_vehicles in data['vehicle']:
+		if vehicle_vehicles['vehicle_id'] == vehicles_id or vehicle_vehicles['make'] == make or vehicle_vehicles['model'] == model or vehicle_vehicles['year'] == year or vehicle_vehicles['registration_no'] == registration_no:
+			return vehicle_vehicles
+	raise HTTPException(
+		status_code=404, detail=f'vehicle not found'
+	)
+
 @app.post('/vehicle')
 async def add_vehicle(vehicles: Vehicles):
 	vehicles_dict = vehicles.dict()

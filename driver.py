@@ -36,6 +36,32 @@ async def read_driver(drivers_id: int):
 		status_code=404, detail=f'driver not found'
 	)
 
+@app.get('/driver/search')
+async def search_drivers(
+    name: str = None,
+    license_no: str = None,
+    date_of_birth: str = None,
+    contact_no: str = None,
+):
+    matching_drivers = []
+
+    for driver in data['driver']:
+        if (
+            (name is None or driver['name'] == name) and
+            (license_no is None or driver['license_no'] == license_no) and
+            (date_of_birth is None or driver['date_of_birth'] == date_of_birth) and
+            (contact_no is None or driver['contact_no'] == contact_no)
+        ):
+            matching_drivers.append(driver)
+
+    if matching_drivers:
+        return matching_drivers
+    else:
+        raise HTTPException(
+            status_code=404,
+            detail='No matching drivers found.',
+        )
+
 @app.post('/driver')
 async def add_driver(drivers: Drivers):
 	drivers_dict = drivers.dict()

@@ -36,6 +36,31 @@ async def read_schedule(schedules_id: int):
 		status_code=404, detail=f'schedule not found'
 	)
 
+@app.get('/schedule/search')
+async def search_schedules(
+	name: str = None,
+	license_no: str = None,
+	date_of_birth: str = None,
+	contact_no: str = None,
+):
+	matching_schedules = []
+
+	for schedule in data['schedule']:
+		if (
+			(name is None or schedule['name'] == name) and
+			(license_no is None or schedule['license_no'] == license_no) and
+			(date_of_birth is None or schedule['date_of_birth'] == date_of_birth) and
+			(contact_no is None or schedule['contact_no'] == contact_no)
+		):
+			matching_schedules.append(schedule)
+
+	if matching_schedules:
+		return matching_schedules
+	else:
+		raise HTTPException(
+			status_code=404, detail=f'schedule not found'
+		)
+
 @app.post('/schedule')
 async def add_schedule(schedules: TransportSchedule):
 	schedules_dict = schedules.dict()
