@@ -21,21 +21,32 @@ app = FastAPI()
 async def read_all_vehicle():
 	return data['vehicle']
 
+@app.get('/vehicle/search')
+async def search_vehicle(vehicles_id: int = None, make: str = None, model: str = None, year: int = None, registration_no: str = None):
+	matching_vehicles = []
+
+	for vehicle in data['vehicle']:
+		if (
+			(vehicles_id is None or vehicle['vehicle_id'] == vehicles_id) and
+			(make is None or vehicle['make'] == make) and
+			(model is None or vehicle['model'] == model) and
+			(year is None or vehicle['year'] == year) and
+			(registration_no is None or vehicle['registration_no'] == registration_no)
+		):
+			matching_vehicles.append(vehicle)
+
+	if matching_vehicles:
+		return matching_vehicles
+	else:
+		raise HTTPException(
+			status_code=404, detail=f'vehicle not found'
+		)
 
 @app.get('/vehicle/{vehicles_id}')
 async def read_vehicle(vehicles_id: int):
 	for vehicle_vehicles in data['vehicle']:
 		print(vehicle_vehicles)
 		if vehicle_vehicles['vehicle_id'] == vehicles_id:
-			return vehicle_vehicles
-	raise HTTPException(
-		status_code=404, detail=f'vehicle not found'
-	)
-
-@app.get('/vehicle/search')
-async def read_vehicle(vehicles_id: int = None, make: str = None, model: str = None, year: int = None, registration_no: str = None):
-	for vehicle_vehicles in data['vehicle']:
-		if vehicle_vehicles['vehicle_id'] == vehicles_id or vehicle_vehicles['make'] == make or vehicle_vehicles['model'] == model or vehicle_vehicles['year'] == year or vehicle_vehicles['registration_no'] == registration_no:
 			return vehicle_vehicles
 	raise HTTPException(
 		status_code=404, detail=f'vehicle not found'

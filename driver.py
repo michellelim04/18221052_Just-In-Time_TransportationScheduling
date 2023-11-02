@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException
 import json
 from pydantic import BaseModel
-
+from typing import Optional
 
 class Drivers(BaseModel): 
 	driver_id : int
@@ -25,18 +25,7 @@ app = FastAPI()
 async def read_all_driver():
 	return data['driver']
 
-
-@app.get('/driver/{drivers_id}')
-async def read_driver(drivers_id: int):
-	for driver_drivers in data['driver']:
-		print(driver_drivers)
-		if driver_drivers['driver_id'] == drivers_id:
-			return driver_drivers
-	raise HTTPException(
-		status_code=404, detail=f'driver not found'
-	)
-
-@app.get('/driver')
+@app.get('/driver/search')
 async def search_drivers(
     name: str = None,
     license_no: str = None,
@@ -61,6 +50,16 @@ async def search_drivers(
             status_code=404,
             detail='No matching drivers found.',
         )
+
+@app.get('/driver/{drivers_id}')
+async def read_driver(drivers_id: int):
+	for driver_drivers in data['driver']:
+		print(driver_drivers)
+		if driver_drivers['driver_id'] == drivers_id:
+			return driver_drivers
+	raise HTTPException(
+		status_code=404, detail=f'driver not found'
+	)
 
 @app.post('/driver')
 async def add_driver(drivers: Drivers):

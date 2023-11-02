@@ -25,18 +25,7 @@ app = FastAPI()
 async def read_all_schedule():
 	return data['schedule']
 
-
-@app.get('/schedule/{schedules_id}')
-async def read_schedule(schedules_id: int):
-	for schedule_schedules in data['schedule']:
-		print(schedule_schedules)
-		if schedule_schedules['schedule_id'] == schedules_id:
-			return schedule_schedules
-	raise HTTPException(
-		status_code=404, detail=f'schedule not found'
-	)
-
-@app.get('/schedule')
+@app.get('/schedule/search')
 async def search_schedule(
 	route_name: str = None,
 	departure_location: str = None,
@@ -69,6 +58,16 @@ async def search_schedule(
 		raise HTTPException(
 			status_code=404, detail=f'schedule not found'
 		)
+
+@app.get('/schedule/{schedules_id}')
+async def read_schedule(schedules_id: int):
+	for schedule_schedules in data['schedule']:
+		print(schedule_schedules)
+		if schedule_schedules['schedule_id'] == schedules_id:
+			return schedule_schedules
+	raise HTTPException(
+		status_code=404, detail=f'schedule not found'
+	)
 
 @app.post('/schedule')
 async def add_schedule(schedules: TransportSchedule):
