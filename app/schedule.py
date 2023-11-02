@@ -14,7 +14,7 @@ class TransportSchedule(BaseModel):
 	driver_id : int
 	status : str
 
-json_filename="schedule.json"
+json_filename="./app/schedule.json"
 
 with open(json_filename,"r") as read_file:
 	data = json.load(read_file)
