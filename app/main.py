@@ -6,9 +6,9 @@ from .routers import driver, schedule, vehicle
 
 app = FastAPI()
 
-app.include_router(driver.router)
-app.include_router(schedule.router)
-app.include_router(vehicle.router)
+app.include_router(driver.app)
+app.include_router(schedule.app)
+app.include_router(vehicle.app)
 
 
 @app.get("/")
