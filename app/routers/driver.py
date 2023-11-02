@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import APIRouter, HTTPException
 import json
 from pydantic import BaseModel
 from typing import Optional
@@ -14,18 +14,22 @@ class Drivers(BaseModel):
 
 
 
-json_filename="driver.json"
+json_filename="./app/json/driver.json"
 
 with open(json_filename,"r") as read_file:
 	data = json.load(read_file)
 
-app = FastAPI()
+app = APIRouter(
+	prefix="/driver",
+	tags=["driver"],
+  responses={404: {"description": "Not found"}}
+)
 
-@app.get('/driver')
+@app.get('/')
 async def read_all_driver():
 	return data['driver']
 
-@app.get('/driver/search')
+@app.get('/search')
 async def search_drivers(
     name: str = None,
     license_no: str = None,
@@ -51,7 +55,7 @@ async def search_drivers(
             detail='No matching drivers found.',
         )
 
-@app.get('/driver/{drivers_id}')
+@app.get('/{drivers_id}')
 async def read_driver(drivers_id: int):
 	for driver_drivers in data['driver']:
 		print(driver_drivers)
@@ -61,7 +65,7 @@ async def read_driver(drivers_id: int):
 		status_code=404, detail=f'driver not found'
 	)
 
-@app.post('/driver')
+@app.post('/')
 async def add_driver(drivers: Drivers):
 	drivers_dict = drivers.dict()
 	drivers_found = False
@@ -80,7 +84,7 @@ async def add_driver(drivers: Drivers):
 		status_code=404, detail=f'driver not found'
 	)
 
-@app.put('/driver')
+@app.put('/')
 async def update_driver(drivers: Drivers):
 	drivers_dict = drivers.dict()
 	drivers_found = False
@@ -99,7 +103,7 @@ async def update_driver(drivers: Drivers):
 		status_code=404, detail=f'driver not found'
 	)
 
-@app.delete('/driver/{drivers_id}')
+@app.delete('/{drivers_id}')
 async def delete_driver(drivers_id: int):
 
 	drivers_found = False

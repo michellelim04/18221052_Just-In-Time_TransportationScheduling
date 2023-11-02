@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import APIRouter, HTTPException
 import json
 from pydantic import BaseModel
 
@@ -14,18 +14,22 @@ class TransportSchedule(BaseModel):
 	driver_id : int
 	status : str
 
-json_filename="./app/schedule.json"
+json_filename="./app/json/schedule.json"
 
 with open(json_filename,"r") as read_file:
 	data = json.load(read_file)
 
-app = FastAPI()
+app = APIRouter(
+	prefix="/schedule",
+	tags=["schedule"],
+  responses={404: {"description": "Not found"}}
+)
 
-@app.get('/schedule')
+@app.get('/')
 async def read_all_schedule():
 	return data['schedule']
 
-@app.get('/schedule/search')
+@app.get('/search')
 async def search_schedule(
 	route_name: str = None,
 	departure_location: str = None,
@@ -59,7 +63,7 @@ async def search_schedule(
 			status_code=404, detail=f'schedule not found'
 		)
 
-@app.get('/schedule/{schedules_id}')
+@app.get('/{schedules_id}')
 async def read_schedule(schedules_id: int):
 	for schedule_schedules in data['schedule']:
 		print(schedule_schedules)
@@ -69,7 +73,7 @@ async def read_schedule(schedules_id: int):
 		status_code=404, detail=f'schedule not found'
 	)
 
-@app.post('/schedule')
+@app.post('/')
 async def add_schedule(schedules: TransportSchedule):
 	schedules_dict = schedules.dict()
 	schedules_found = False
@@ -88,7 +92,7 @@ async def add_schedule(schedules: TransportSchedule):
 		status_code=404, detail=f'schedule not found'
 	)
 
-@app.put('/schedule')
+@app.put('/')
 async def update_schedule(schedules: TransportSchedule):
 	schedules_dict = schedules.dict()
 	schedules_found = False
@@ -107,7 +111,7 @@ async def update_schedule(schedules: TransportSchedule):
 		status_code=404, detail=f'schedule not found'
 	)
 
-@app.delete('/schedule/{schedules_id}')
+@app.delete('/{schedules_id}')
 async def delete_schedule(schedules_id: int):
 
 	schedules_found = False
