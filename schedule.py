@@ -39,18 +39,29 @@ async def read_schedule(schedules_id: int):
 @app.get('/schedule/search')
 async def search_schedules(
 	name: str = None,
-	license_no: str = None,
-	date_of_birth: str = None,
-	contact_no: str = None,
+	route_name: str = None,
+	departure_location: str = None,
+	arrival_location: str = None,
+	departure_time : str = None,
+	arrival_time : str = None,
+	vehicle_id : int = None,
+	driver_id : int = None,
+	status : str = None
+
 ):
 	matching_schedules = []
 
 	for schedule in data['schedule']:
 		if (
 			(name is None or schedule['name'] == name) and
-			(license_no is None or schedule['license_no'] == license_no) and
-			(date_of_birth is None or schedule['date_of_birth'] == date_of_birth) and
-			(contact_no is None or schedule['contact_no'] == contact_no)
+			(route_name is None or schedule['route_name'] == route_name) and
+			(departure_location is None or schedule['departure_location'] == departure_location) and
+			(arrival_location is None or schedule['arrival_location'] == arrival_location) and
+			(departure_time is None or schedule['departure_time'] == departure_time) and
+			(arrival_time is None or schedule['arrival_time'] == arrival_time) and
+			(vehicle_id is None or schedule['vehicle_id'] == vehicle_id) and
+			(driver_id is None or schedule['driver_id'] == driver_id) and
+			(status is None or schedule['status'] == status) 
 		):
 			matching_schedules.append(schedule)
 
