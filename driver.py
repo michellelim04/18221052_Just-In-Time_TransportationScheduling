@@ -36,7 +36,7 @@ async def read_driver(drivers_id: int):
 		status_code=404, detail=f'driver not found'
 	)
 
-@app.get('/driver/search')
+@app.get('/driver')
 async def search_drivers(
     name: str = None,
     license_no: str = None,
@@ -45,14 +45,15 @@ async def search_drivers(
 ):
     matching_drivers = []
 
-    for driver_drivers in data['driver']:
+    for driver in data.get('driver', []):
+        # Check if any parameter matches the driver's attributes, and all other parameters are None
         if (
-            (driver_drivers['name'] == name) and
-            (driver_drivers['license_no'] == license_no) and
-            (driver_drivers['date_of_birth'] == date_of_birth) and
-            (driver_drivers['contact_no'] == contact_no)
+            (name is None or driver['name'] == name) and
+            (license_no is None or driver['license_no'] == license_no) and
+            (date_of_birth is None or driver['date_of_birth'] == date_of_birth) and
+            (contact_no is None or driver['contact_no'] == contact_no)
         ):
-            matching_drivers.append(driver_drivers)
+            matching_drivers.append(driver)
 
     if matching_drivers:
         return matching_drivers

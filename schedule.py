@@ -36,9 +36,8 @@ async def read_schedule(schedules_id: int):
 		status_code=404, detail=f'schedule not found'
 	)
 
-@app.get('/schedule/search')
-async def search_schedules(
-	name: str = None,
+@app.get('/schedule')
+async def search_schedule(
 	route_name: str = None,
 	departure_location: str = None,
 	arrival_location: str = None,
@@ -53,7 +52,6 @@ async def search_schedules(
 
 	for schedule in data['schedule']:
 		if (
-			(name is None or schedule['name'] == name) and
 			(route_name is None or schedule['route_name'] == route_name) and
 			(departure_location is None or schedule['departure_location'] == departure_location) and
 			(arrival_location is None or schedule['arrival_location'] == arrival_location) and
