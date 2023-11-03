@@ -25,7 +25,7 @@ jobs:
           docker tag openapi-main:latest <ACR_NAME>.azurecr.io/openapi-main
           docker push <ACR_NAME>.azurecr.io/openapi-main:latest
         env:
-          ACR_NAME: ${{REGISTRY_NAME}}
+          ACR_NAME: ${{secrets.REGISTRY_NAME}}
       - name: Clean up
         run: docker logout
 
