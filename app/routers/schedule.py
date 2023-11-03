@@ -41,6 +41,21 @@ async def search_schedule(
 	status : str = None
 
 ):
+	"""
+	Search for schedules based on one or more parameters.
+	
+	Insert the parameter(s) as follows:
+	- `route_name`: (Optional) The name of the route.
+	- `departure_location`: (Optional) The name of the departure location.
+	- `arrival_location`: (Optional) The name of the arrival location.
+	- `departure_time`: (Optional) The time of departure in format 'YYYY-MM-DD HH:MM:SS'.
+	- `arrival_time`: (Optional) The time of arrival in format 'YYYY-MM-DD HH:MM:SS'.
+	- `vehicle_id`: (Optional) The ID of the vehicle.
+	- `driver_id`: (Optional) The ID of the driver.
+	- `status`: (Optional) The status of the transportation trip (SCHEDULED/DEPARTED/ONGOING/ARRIVED).
+
+	Returns a list of matching schedules.
+	"""
 	matching_schedules = []
 
 	for schedule in data['schedule']:
@@ -60,27 +75,55 @@ async def search_schedule(
 		return matching_schedules
 	else:
 		raise HTTPException(
-			status_code=404, detail=f'schedule not found'
+			status_code=404, detail=f'Schedule not found'
 		)
 
 @app.get('/{schedules_id}')
 async def read_schedule(schedules_id: int):
+	"""
+	Retrieve information about a transportation schedule based on their unique identifier. 
+	
+	Insert the parameter as follows:
+	- `schedules_id`: (Required) The ID of the schedule.
+		
+	Returns detailed information of a transportation schedule. 
+	"""
 	for schedule_schedules in data['schedule']:
 		print(schedule_schedules)
 		if schedule_schedules['schedule_id'] == schedules_id:
 			return schedule_schedules
 	raise HTTPException(
-		status_code=404, detail=f'schedule not found'
+		status_code=404, detail=f'Schedule not found'
 	)
 
 @app.post('/')
 async def add_schedule(schedules: TransportSchedule):
+	"""
+	Add a schedule's information in the dataset based on the schedule's unique identifier.
+
+	Checks whether a schedule with the specified ID exists in the database.
+	If the schedule does not exist, the function will add the schedule to the dataset. 
+	
+	Insert the parameter(s) in the request body as follows:
+	- `schedule_id`: (Required) The ID of the schedule.
+	- `route_name`: (Optional) The name of the route.
+	- `departure_location`: (Optional) The name of the departure location.
+	- `arrival_location`: (Optional) The name of the arrival location.
+	- `departure_time`: (Optional) The time of departure in format 'YYYY-MM-DD HH:MM:SS'.
+	- `arrival_time`: (Optional) The time of arrival in format 'YYYY-MM-DD HH:MM:SS'.
+	- `vehicle_id`: (Optional) The ID of the vehicle.
+	- `driver_id`: (Optional) The ID of the driver.
+	- `status`: (Optional) The status of the transportation trip (SCHEDULED/DEPARTED/ONGOING/ARRIVED).
+		
+	Returns the schedule's information if added.
+	If the schedule already exists, it returns a message indicating the schedule exists.
+	"""
 	schedules_dict = schedules.dict()
 	schedules_found = False
 	for schedule_schedules in data['schedule']:
 		if schedule_schedules['schedule_id'] == schedules_dict['schedule_id']:
 			schedules_found = True
-			return "Driver ID "+str(schedules_dict['schedule_id'])+" exists."
+			return "Schedule ID "+str(schedules_dict['schedule_id'])+" exists."
 	
 	if not schedules_found:
 		data['schedule'].append(schedules_dict)
@@ -89,11 +132,29 @@ async def add_schedule(schedules: TransportSchedule):
 
 		return schedules_dict
 	raise HTTPException(
-		status_code=404, detail=f'schedule not found'
+		status_code=404, detail=f'Schedule not found'
 	)
 
 @app.put('/')
+
 async def update_schedule(schedules: TransportSchedule):
+	"""
+	Update a schedule's information based on the schedule's unique ID.
+
+	In the request body, specify the schedule's unique schedule ID and put updates of the following parameter:
+	- `schedule_id`: (Required) The ID of the schedule.
+	- `route_name`: (Optional) The name of the route.
+	- `departure_location`: (Optional) The name of the departure location.
+	- `arrival_location`: (Optional) The name of the arrival location.
+	- `departure_time`: (Optional) The time of departure in format 'YYYY-MM-DD HH:MM:SS'.
+	- `arrival_time`: (Optional) The time of arrival in format 'YYYY-MM-DD HH:MM:SS'.
+	- `vehicle_id`: (Optional) The ID of the vehicle.
+	- `driver_id`: (Optional) The ID of the driver.
+	- `status`: (Optional) The status of the transportation trip (SCHEDULED/DEPARTED/ONGOING/ARRIVED).
+
+	If the schedule with the specified ID exists, returns "updated" to indicate a successful update.
+	Else, returns "Schedule ID not found." to indicate the specified schedule to be updated does not exist.
+	"""
 	schedules_dict = schedules.dict()
 	schedules_found = False
 	for schedule_idx, schedule_schedules in enumerate(data['schedule']):
@@ -106,13 +167,23 @@ async def update_schedule(schedules: TransportSchedule):
 			return "updated"
 	
 	if not schedules_found:
-		return "Driver ID not found."
+		return "Schedule ID not found."
 	raise HTTPException(
-		status_code=404, detail=f'schedule not found'
+		status_code=404, detail=f'Schedule not found'
 	)
 
 @app.delete('/{schedules_id}')
 async def delete_schedule(schedules_id: int):
+
+	"""
+	Delete a schedule's information by specifying their unique identifier. 
+	
+	Insert the parameter as follows:
+	- `schedules_id`: (Required) The ID of the schedule.
+		
+	Returns "deleted" to indicate a successful deletion of a schedule's data
+	with the specified ID. 
+	"""
 
 	schedules_found = False
 	for schedule_idx, schedule_schedules in enumerate(data['schedule']):
@@ -125,7 +196,7 @@ async def delete_schedule(schedules_id: int):
 			return "updated"
 	
 	if not schedules_found:
-		return "Driver ID not found."
+		return "Schedule ID not found."
 	raise HTTPException(
-		status_code=404, detail=f'schedule not found'
+		status_code=404, detail=f'Schedule not found'
 	)

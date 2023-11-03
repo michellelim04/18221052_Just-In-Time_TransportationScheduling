@@ -31,7 +31,8 @@ async def read_all_driver():
 @app.get('/search')
 async def search_drivers(name: str = None, license_no: str = None, date_of_birth: str = None, contact_no: str = None):
 	"""
-	Search for drivers based on one or more parameters 
+	Search for drivers based on one or more parameters.
+	 
 	Insert the parameter(s) as follows:
 	- `name`: (Optional) The name of the driver.
 	- `license_no`: (Optional) The driver's license number.
