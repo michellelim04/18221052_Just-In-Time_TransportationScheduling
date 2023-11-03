@@ -29,42 +29,36 @@ async def read_all_driver():
 	return data['driver']
 
 @app.get('/search')
-async def search_drivers(
-    name: str = None,
-    license_no: str = None,
-    date_of_birth: str = None,
-    contact_no: str = None,
-):
-    """
+async def search_drivers(name: str = None, license_no: str = None, date_of_birth: str = None, contact_no: str = None):
+	"""
 	Search for drivers based on one or more parameters 
-	
 	Insert the parameter(s) as follows:
 	- `name`: (Optional) The name of the driver.
 	- `license_no`: (Optional) The driver's license number.
 	- `date_of_birth`: (Optional) The driver's date of birth.
 	- `contact_no`: (Optional) The driver's contact number.
 
-    Returns a list of matching drivers.
-    """
-	
-    matching_drivers = []
+	Returns a list of matching drivers.
+	"""
 
-    for driver in data.get('driver', []):
-        if (
-            (name is None or driver['name'] == name) and
-            (license_no is None or driver['license_no'] == license_no) and
-            (date_of_birth is None or driver['date_of_birth'] == date_of_birth) and
-            (contact_no is None or driver['contact_no'] == contact_no)
-        ):
-            matching_drivers.append(driver)
+	matching_drivers = []
 
-    if matching_drivers:
-        return matching_drivers
-    else:
-        raise HTTPException(
-            status_code=404,
-            detail='No matching drivers found.',
-        )
+	for driver in data.get('driver', []):
+			if (
+					(name is None or driver['name'] == name) and
+					(license_no is None or driver['license_no'] == license_no) and
+					(date_of_birth is None or driver['date_of_birth'] == date_of_birth) and
+					(contact_no is None or driver['contact_no'] == contact_no)
+			):
+					matching_drivers.append(driver)
+
+	if matching_drivers:
+			return matching_drivers
+	else:
+			raise HTTPException(
+					status_code=404,
+					detail='No matching drivers found.',
+			)
 
 @app.get('/{drivers_id}')
 async def read_driver(drivers_id: int):
