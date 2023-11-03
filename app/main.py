@@ -14,3 +14,7 @@ app.include_router(vehicle.app)
 @app.get("/")
 def read_root():
 	return {"message": "Hello World"}
+
+@app.get("/ping")
+def ping():
+	return {"status": 200, "valid": true, "message": "pong", data: {}}
