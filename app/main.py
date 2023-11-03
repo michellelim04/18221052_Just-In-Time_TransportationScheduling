@@ -17,4 +17,4 @@ def read_root():
 
 @app.get("/ping")
 def ping():
-	return {"status": 200, "valid": 1, "message": "pong", data: {}}
+	return {"status": 200, "valid": 1, "message": "pong"}
