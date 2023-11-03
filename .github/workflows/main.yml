@@ -22,10 +22,8 @@ jobs:
       - name: Build and push Docker image
         run: |
           docker build -t openapi-main:latest .
-          docker tag openapi-main:latest <ACR_NAME>.azurecr.io/openapi-main
-          docker push <ACR_NAME>.azurecr.io/openapi-main:latest
-        env:
-          ACR_NAME: ${{secrets.REGISTRY_NAME}}
+          docker tag openapi-main:latest ${{secrets.REGISTRY_NAME}}.azurecr.io/openapi-main
+          docker push ${{secrets.REGISTRY_NAME}}.azurecr.io/openapi-main:latest
       - name: Clean up
         run: docker logout
 
