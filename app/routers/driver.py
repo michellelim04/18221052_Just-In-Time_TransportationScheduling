@@ -13,7 +13,6 @@ class Drivers(BaseModel):
 	address : str
 
 
-
 json_filename="./app/json/driver.json"
 
 with open(json_filename,"r") as read_file:
@@ -36,6 +35,18 @@ async def search_drivers(
     date_of_birth: str = None,
     contact_no: str = None,
 ):
+    """
+	Search for drivers based on one or more parameters 
+	
+	Insert the parameter(s) as follows:
+	- `name`: (Optional) The name of the driver.
+	- `license_no`: (Optional) The driver's license number.
+	- `date_of_birth`: (Optional) The driver's date of birth.
+	- `contact_no`: (Optional) The driver's contact number.
+
+    Returns a list of matching drivers.
+    """
+	
     matching_drivers = []
 
     for driver in data.get('driver', []):
@@ -57,16 +68,42 @@ async def search_drivers(
 
 @app.get('/{drivers_id}')
 async def read_driver(drivers_id: int):
+	"""
+	Retrieve information about a driver based on their unique identifier. 
+	
+	Insert the parameter as follows:
+	- `drivers_id`: (Required) The ID of the driver.
+		
+	Returns detailed information of a driver. 
+    """
 	for driver_drivers in data['driver']:
 		print(driver_drivers)
 		if driver_drivers['driver_id'] == drivers_id:
 			return driver_drivers
 	raise HTTPException(
-		status_code=404, detail=f'driver not found'
+		status_code=404, detail=f'Driver not found'
 	)
 
 @app.post('/')
 async def add_driver(drivers: Drivers):
+	"""
+	Add a driver's information in the dataset based on the driver's unique identifier.
+
+	Checks whether a driver with the specified ID exists in the database.
+	If the driver does not exist, the function will add the driver to the dataset. 
+	
+	Insert the parameter(s) in the request body as follows:
+	- `driver_id`: (Required) The ID of the driver.
+	- `name`: (Optional) The name of the driver.
+	- `license_no`: (Optional) The driver's license number.
+	- `date_of_birth`: (Optional) The driver's date of birth.
+	- `contact_no`: (Optional) The driver's contact number.
+	- `email`: (Optional) The email of the driver.
+	- `address`: (Optional) The driver's address.
+		
+	Returns the driver's information if added.
+	If the driver already exists, it returns a message indicating the driver exists.
+	"""
 	drivers_dict = drivers.dict()
 	drivers_found = False
 	for driver_drivers in data['driver']:
@@ -81,11 +118,26 @@ async def add_driver(drivers: Drivers):
 
 		return drivers_dict
 	raise HTTPException(
-		status_code=404, detail=f'driver not found'
+		status_code=404, detail=f'Driver not found'
 	)
 
 @app.put('/')
 async def update_driver(drivers: Drivers):
+	"""
+	Update a driver's information based on the driver's unique ID.
+
+	In the request body, specify the driver's unique driver ID and put updates of the following parameter:
+	- `driver_id`: (Required) The ID of the driver.
+	- `name`: (Optional) The name of the driver.
+	- `license_no`: (Optional) The driver's license number.
+	- `date_of_birth`: (Optional) The driver's date of birth.
+	- `contact_no`: (Optional) The driver's contact number.
+	- `email`: (Optional) The email address of the driver.
+	- `address`: (Optional) The driver's address.
+
+	If the driver with the specified ID exists, returns "updated" to indicate a successful update.
+	Else, returns "Driver ID not found." to indicate the specified driver to be updated does not exist.
+	"""
 	drivers_dict = drivers.dict()
 	drivers_found = False
 	for driver_idx, driver_drivers in enumerate(data['driver']):
@@ -100,11 +152,20 @@ async def update_driver(drivers: Drivers):
 	if not drivers_found:
 		return "Driver ID not found."
 	raise HTTPException(
-		status_code=404, detail=f'driver not found'
+		status_code=404, detail=f'Driver not found'
 	)
 
 @app.delete('/{drivers_id}')
 async def delete_driver(drivers_id: int):
+	"""
+	Delete a driver's information by specifying their unique identifier. 
+	
+	Insert the parameter as follows:
+	- `drivers_id`: (Required) The ID of the driver.
+		
+	Returns "deleted" to indicate a successful deletion of a driver's data
+	with the specified ID. 
+	"""
 
 	drivers_found = False
 	for driver_idx, driver_drivers in enumerate(data['driver']):
@@ -119,5 +180,5 @@ async def delete_driver(drivers_id: int):
 	if not drivers_found:
 		return "Driver ID not found."
 	raise HTTPException(
-		status_code=404, detail=f'driver not found'
+		status_code=404, detail=f'Driver not found'
 	)
