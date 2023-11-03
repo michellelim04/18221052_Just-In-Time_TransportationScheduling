@@ -21,7 +21,7 @@ with open(json_filename,"r") as read_file:
 app = APIRouter(
 	prefix="/driver",
 	tags=["driver"],
-  responses={404: {"description": "Not found"}}
+  responses={404: {"description": "Not found"}},
 )
 
 @app.get('/')
