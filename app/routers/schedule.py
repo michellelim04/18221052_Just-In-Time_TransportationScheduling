@@ -193,7 +193,7 @@ async def delete_schedule(schedules_id: int):
 			
 			with open(json_filename,"w") as write_file:
 				json.dump(data, write_file)
-			return "updated"
+			return "deleted"
 	
 	if not schedules_found:
 		return "Schedule ID not found."

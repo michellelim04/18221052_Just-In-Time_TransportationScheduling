@@ -170,7 +170,7 @@ async def delete_driver(drivers_id: int):
 			
 			with open(json_filename,"w") as write_file:
 				json.dump(data, write_file)
-			return "updated"
+			return "deleted"
 	
 	if not drivers_found:
 		return "Driver ID not found."
