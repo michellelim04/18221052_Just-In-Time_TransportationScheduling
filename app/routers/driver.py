@@ -3,6 +3,7 @@ import json
 from pydantic import BaseModel
 from typing import Optional
 
+# model for adding driver
 class Drivers(BaseModel): 
 	driver_id : int
 	name : str
@@ -11,6 +12,15 @@ class Drivers(BaseModel):
 	contact_no : str
 	email : str
 	address : str
+
+# model for updating driver
+class DriverUpdate(BaseModel):
+    name: Optional[str] = None
+    license_no: Optional[str] = None
+    date_of_birth: Optional[str] = None
+    contact_no: Optional[str] = None
+    email: Optional[str] = None
+    address: Optional[str] = None
 
 
 json_filename="./app/json/driver.json"
@@ -112,12 +122,12 @@ async def add_driver(drivers: Drivers):
 			json.dump(data, write_file)
 
 		return drivers_dict
-	raise HTTPException(
+		raise HTTPException(
 		status_code=404, detail=f'Driver not found'
 	)
 
-@app.put('/')
-async def update_driver(drivers: Drivers):
+@app.put('/{drivers_id}')
+async def update_driver(drivers_id: int, drivers: DriverUpdate):
 	"""
 	Update a driver's information based on the driver's unique ID.
 
@@ -133,22 +143,23 @@ async def update_driver(drivers: Drivers):
 	If the driver with the specified ID exists, returns "updated" to indicate a successful update.
 	Else, returns "Driver ID not found." to indicate the specified driver to be updated does not exist.
 	"""
-	drivers_dict = drivers.dict()
+	drivers_dict = drivers.dict(exclude_unset=True)
 	drivers_found = False
 	for driver_idx, driver_drivers in enumerate(data['driver']):
-		if driver_drivers['driver_id'] == drivers_dict['driver_id']:
+		if driver_drivers['driver_id'] == drivers_id:
 			drivers_found = True
-			data['driver'][driver_idx]=drivers_dict
-			
+			# Update only the fields that are provided in the request
+			for field, value in drivers_dict.items():
+				data['driver'][driver_idx][field] = value
 			with open(json_filename,"w") as write_file:
 				json.dump(data, write_file)
 			return "updated"
-	
+    
 	if not drivers_found:
 		return "Driver ID not found."
 	raise HTTPException(
 		status_code=404, detail=f'Driver not found'
-	)
+    )
 
 @app.delete('/{drivers_id}')
 async def delete_driver(drivers_id: int):

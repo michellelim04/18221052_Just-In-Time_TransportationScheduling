@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
 import json
 from pydantic import BaseModel
-
+from typing import Optional
 
 class Vehicles(BaseModel): 
 	vehicle_id : int
@@ -9,6 +9,12 @@ class Vehicles(BaseModel):
 	model : str
 	year : int
 	registration_no : str
+
+class VehiclesUpdate(BaseModel):
+	make: Optional[str] = None
+	model: Optional[str] = None
+	year: Optional[int] = None
+	registration_no: Optional[str] = None
 
 json_filename="./app/json/vehicle.json"
 
@@ -111,8 +117,8 @@ async def add_vehicle(vehicles: Vehicles):
 		status_code=404, detail=f'vehicle not found'
 	)
 
-@app.put('/')
-async def update_vehicle(vehicles: Vehicles):
+@app.put('/{vehicles_id}')
+async def update_vehicle(vehicles_id: int, vehicles: VehiclesUpdate):
 	"""
 	Update a vehicle's information based on the vehicle's unique ID.
 
@@ -126,21 +132,21 @@ async def update_vehicle(vehicles: Vehicles):
 	If the vehicle with the specified ID exists, returns "updated" to indicate a successful update.
 	Else, returns "Vehicle ID not found." to indicate the specified vehicle to be updated does not exist.
 	"""
-	vehicles_dict = vehicles.dict()
+	vehicles_dict = vehicles.dict(exclude_unset=True)
 	vehicles_found = False
 	for vehicle_idx, vehicle_vehicles in enumerate(data['vehicle']):
-		if vehicle_vehicles['vehicle_id'] == vehicles_dict['vehicle_id']:
+		if vehicle_vehicles['vehicle_id'] == vehicles_id:
 			vehicles_found = True
-			data['vehicle'][vehicle_idx]=vehicles_dict
-			
+			for field, value in vehicles_dict.items():
+				data['vehicle'][vehicle_idx][field] = value
 			with open(json_filename,"w") as write_file:
 				json.dump(data, write_file)
 			return "updated"
-	
+		
 	if not vehicles_found:
 		return "Vehicle ID not found."
 	raise HTTPException(
-		status_code=404, detail=f'vehicle not found'
+		status_code=404, detail=f'Vehicle not found'
 	)
 
 @app.delete('/{vehicles_id}')

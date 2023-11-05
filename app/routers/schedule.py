@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
 import json
 from pydantic import BaseModel
-
+from typing import Optional
 
 class TransportSchedule(BaseModel): 
 	schedule_id : int
@@ -13,6 +13,16 @@ class TransportSchedule(BaseModel):
 	vehicle_id : int
 	driver_id : int
 	status : str
+
+class TransportScheduleUpdate(BaseModel):
+	route_name: Optional[str] = None
+	departure_location: Optional[str] = None
+	arrival_location: Optional[str] = None
+	departure_time: Optional[str] = None
+	arrival_time: Optional[str] = None
+	vehicle_id: Optional[int] = None
+	driver_id: Optional[int] = None
+	status: Optional[str] = None
 
 json_filename="./app/json/schedule.json"
 
@@ -78,19 +88,19 @@ async def search_schedule(
 			status_code=404, detail=f'Schedule not found'
 		)
 
-@app.get('/{schedules_id}')
-async def read_schedule(schedules_id: int):
+@app.get('/{schedule_id}')
+async def read_schedule(schedule_id: int):
 	"""
 	Retrieve information about a transportation schedule based on their unique identifier. 
 	
 	Insert the parameter as follows:
-	- `schedules_id`: (Required) The ID of the schedule.
+	- `schedule_id`: (Required) The ID of the schedule.
 		
 	Returns detailed information of a transportation schedule. 
 	"""
 	for schedule_schedules in data['schedule']:
 		print(schedule_schedules)
-		if schedule_schedules['schedule_id'] == schedules_id:
+		if schedule_schedules['schedule_id'] == schedule_id:
 			return schedule_schedules
 	raise HTTPException(
 		status_code=404, detail=f'Schedule not found'
@@ -135,9 +145,8 @@ async def add_schedule(schedules: TransportSchedule):
 		status_code=404, detail=f'Schedule not found'
 	)
 
-@app.put('/')
-
-async def update_schedule(schedules: TransportSchedule):
+@app.put('/{schedule_id}')
+async def update_schedule(schedule_id: int, schedules: TransportScheduleUpdate):
 	"""
 	Update a schedule's information based on the schedule's unique ID.
 
@@ -155,31 +164,31 @@ async def update_schedule(schedules: TransportSchedule):
 	If the schedule with the specified ID exists, returns "updated" to indicate a successful update.
 	Else, returns "Schedule ID not found." to indicate the specified schedule to be updated does not exist.
 	"""
-	schedules_dict = schedules.dict()
+	schedules_dict = schedules.dict(exclude_unset=True)
 	schedules_found = False
 	for schedule_idx, schedule_schedules in enumerate(data['schedule']):
-		if schedule_schedules['schedule_id'] == schedules_dict['schedule_id']:
+		if schedule_schedules['schedule_id'] == schedule_id:
 			schedules_found = True
-			data['schedule'][schedule_idx]=schedules_dict
-			
+			for field, value in schedules_dict.items():
+				data['schedule'][schedule_idx][field] = value
 			with open(json_filename,"w") as write_file:
 				json.dump(data, write_file)
 			return "updated"
-	
+		
 	if not schedules_found:
 		return "Schedule ID not found."
 	raise HTTPException(
 		status_code=404, detail=f'Schedule not found'
 	)
-
-@app.delete('/{schedules_id}')
-async def delete_schedule(schedules_id: int):
+		
+@app.delete('/{schedule_id}')
+async def delete_schedule(schedule_id: int):
 
 	"""
 	Delete a schedule's information by specifying their unique identifier. 
 	
 	Insert the parameter as follows:
-	- `schedules_id`: (Required) The ID of the schedule.
+	- `schedule_id`: (Required) The ID of the schedule.
 		
 	Returns "deleted" to indicate a successful deletion of a schedule's data
 	with the specified ID. 
@@ -187,7 +196,7 @@ async def delete_schedule(schedules_id: int):
 
 	schedules_found = False
 	for schedule_idx, schedule_schedules in enumerate(data['schedule']):
-		if schedule_schedules['schedule_id'] == schedules_id:
+		if schedule_schedules['schedule_id'] == schedule_id:
 			schedules_found = True
 			data['schedule'].pop(schedule_idx)
 			
