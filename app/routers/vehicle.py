@@ -31,6 +31,7 @@ async def search_vehicle(vehicles_id: int = None, make: str = None, model: str =
 	Search for vehicles based on one or more parameters.
 	
 	Insert the parameter(s) as follows:
+	- `vehicles_id`: (Optional) The ID of the vehicle.
 	- `make`: (Optional) The make of the vehicle.
 	- `model`: (Optional) The vehicle's model name.
 	- `year`: (Optional) The vehicle's manufactured year.
