@@ -187,7 +187,7 @@ async def delete_schedule(schedules_id: int):
 
 	schedules_found = False
 	for schedule_idx, schedule_schedules in enumerate(data['schedule']):
-		if schedule_schedules['id'] == schedules_id:
+		if schedule_schedules['schedule_id'] == schedules_id:
 			schedules_found = True
 			data['schedule'].pop(schedule_idx)
 			

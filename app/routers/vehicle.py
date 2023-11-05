@@ -158,13 +158,13 @@ async def delete_vehicle(vehicles_id: int):
 
 	vehicles_found = False
 	for vehicle_idx, vehicle_vehicles in enumerate(data['vehicle']):
-		if vehicle_vehicles['id'] == vehicles_id:
+		if vehicle_vehicles['vehicle_id'] == vehicles_id:
 			vehicles_found = True
 			data['vehicle'].pop(vehicle_idx)
 			
 			with open(json_filename,"w") as write_file:
 				json.dump(data, write_file)
-			return "updated"
+			return "deleted"
 	
 	if not vehicles_found:
 		return "Vehicle ID not found."

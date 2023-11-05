@@ -164,7 +164,7 @@ async def delete_driver(drivers_id: int):
 
 	drivers_found = False
 	for driver_idx, driver_drivers in enumerate(data['driver']):
-		if driver_drivers['id'] == drivers_id:
+		if driver_drivers['driver_id'] == drivers_id:
 			drivers_found = True
 			data['driver'].pop(driver_idx)
 			
