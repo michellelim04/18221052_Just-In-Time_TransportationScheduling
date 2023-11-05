@@ -131,7 +131,7 @@ async def update_driver(drivers_id: int, drivers: DriverUpdate):
 	"""
 	Update a driver's information based on the driver's unique ID.
 
-	In the request body, specify the driver's unique driver ID and put updates of the following parameter:
+	In the request body, specify the driver's unique driver ID and put updates of the parameters you want to update:
 	- `driver_id`: (Required) The ID of the driver.
 	- `name`: (Optional) The name of the driver.
 	- `license_no`: (Optional) The driver's license number.
@@ -139,6 +139,8 @@ async def update_driver(drivers_id: int, drivers: DriverUpdate):
 	- `contact_no`: (Optional) The driver's contact number.
 	- `email`: (Optional) The email address of the driver.
 	- `address`: (Optional) The driver's address.
+
+	For the parameters that are not to be updated, please delete them before executing the function.
 
 	If the driver with the specified ID exists, returns "updated" to indicate a successful update.
 	Else, returns "Driver ID not found." to indicate the specified driver to be updated does not exist.

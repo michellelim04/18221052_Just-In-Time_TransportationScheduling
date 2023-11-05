@@ -150,7 +150,7 @@ async def update_schedule(schedule_id: int, schedules: TransportScheduleUpdate):
 	"""
 	Update a schedule's information based on the schedule's unique ID.
 
-	In the request body, specify the schedule's unique schedule ID and put updates of the following parameter:
+	In the request body, specify the schedule's unique schedule ID and put updates of the parameters you want to update:
 	- `schedule_id`: (Required) The ID of the schedule.
 	- `route_name`: (Optional) The name of the route.
 	- `departure_location`: (Optional) The name of the departure location.
@@ -160,6 +160,8 @@ async def update_schedule(schedule_id: int, schedules: TransportScheduleUpdate):
 	- `vehicle_id`: (Optional) The ID of the vehicle.
 	- `driver_id`: (Optional) The ID of the driver.
 	- `status`: (Optional) The status of the transportation trip (SCHEDULED/DEPARTED/ONGOING/ARRIVED).
+
+	For the parameters that are not to be updated, please delete them before executing the function.  
 
 	If the schedule with the specified ID exists, returns "updated" to indicate a successful update.
 	Else, returns "Schedule ID not found." to indicate the specified schedule to be updated does not exist.

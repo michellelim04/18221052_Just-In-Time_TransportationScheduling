@@ -122,12 +122,14 @@ async def update_vehicle(vehicles_id: int, vehicles: VehiclesUpdate):
 	"""
 	Update a vehicle's information based on the vehicle's unique ID.
 
-	In the request body, specify the vehicle's unique vehicle ID and put updates of the following parameter:
+	In the request body, specify the vehicle's unique vehicle ID and put updates of the  parameters you want to update:
 	- `vehicle_id`: (Required) The ID of the vehicle.
 	- `make`: (Optional) The make of the vehicle.
 	- `model`: (Optional) The vehicle's model name.
 	- `year`: (Optional) The vehicle's manufactured year.
 	- `registration_no`: (Optional) The vehicle's registration number.
+
+	For the parameters that are not to be updated, please delete them before executing the function. 
 
 	If the vehicle with the specified ID exists, returns "updated" to indicate a successful update.
 	Else, returns "Vehicle ID not found." to indicate the specified vehicle to be updated does not exist.
