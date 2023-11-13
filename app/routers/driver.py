@@ -37,7 +37,7 @@ app = APIRouter(
 )
 
 @app.get('/')
-async def read_all_driver():
+async def read_all_driver(current_user: User = Depends(get_current_active_user)):
 	return data['driver']
 
 @app.get('/search')
@@ -74,7 +74,7 @@ async def search_drivers(name: str = None, license_no: str = None, date_of_birth
 			)
 
 @app.get('/{drivers_id}')
-async def read_driver(drivers_id: int):
+async def read_driver(drivers_id: int, current_user: User = Depends(get_current_active_user)):
 	"""
 	Retrieve information about a driver based on their unique identifier. 
 	
@@ -129,7 +129,7 @@ async def add_driver(drivers: Drivers, current_user: User = Depends(get_current_
 	)
 
 @app.put('/{drivers_id}')
-async def update_driver(drivers_id: int, drivers: DriverUpdate):
+async def update_driver(drivers_id: int, drivers: DriverUpdate, current_user: User = Depends(get_current_active_user)):
 	"""
 	Update a driver's information based on the driver's unique ID.
 
@@ -166,7 +166,7 @@ async def update_driver(drivers_id: int, drivers: DriverUpdate):
     )
 
 @app.delete('/{drivers_id}')
-async def delete_driver(drivers_id: int):
+async def delete_driver(drivers_id: int, current_user: User = Depends(get_current_active_user)):
 	"""
 	Delete a driver's information by specifying their unique identifier. 
 	

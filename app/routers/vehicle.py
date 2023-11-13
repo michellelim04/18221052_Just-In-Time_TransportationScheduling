@@ -1,7 +1,9 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 import json
 from pydantic import BaseModel
 from typing import Optional
+from ..main import *
+from ..auth import get_current_active_user, User
 
 class Vehicles(BaseModel): 
 	vehicle_id : int
@@ -28,11 +30,11 @@ app = APIRouter(
 )
 
 @app.get('/')
-async def read_all_vehicle():
+async def read_all_vehicle(current_user: User = Depends(get_current_active_user)):
 	return data['vehicle']
 
 @app.get('/search')
-async def search_vehicle(vehicles_id: int = None, make: str = None, model: str = None, year: int = None, registration_no: str = None):
+async def search_vehicle(vehicles_id: int = None, make: str = None, model: str = None, year: int = None, registration_no: str = None, current_user: User = Depends(get_current_active_user)):
 	"""
 	Search for vehicles based on one or more parameters.
 	
@@ -65,7 +67,7 @@ async def search_vehicle(vehicles_id: int = None, make: str = None, model: str =
 		)
 
 @app.get('/{vehicles_id}')
-async def read_vehicle(vehicles_id: int):
+async def read_vehicle(vehicles_id: int, current_user: User = Depends(get_current_active_user)):
 	"""
 	Retrieve information about a vehicle based on their unique identifier. 
 	
@@ -83,7 +85,7 @@ async def read_vehicle(vehicles_id: int):
 	)
 
 @app.post('/')
-async def add_vehicle(vehicles: Vehicles):
+async def add_vehicle(vehicles: Vehicles, current_user: User = Depends(get_current_active_user)):
 	"""
 	Add a vehicle's information in the dataset based on the vehicle's unique identifier.
 
@@ -118,7 +120,7 @@ async def add_vehicle(vehicles: Vehicles):
 	)
 
 @app.put('/{vehicles_id}')
-async def update_vehicle(vehicles_id: int, vehicles: VehiclesUpdate):
+async def update_vehicle(vehicles_id: int, vehicles: VehiclesUpdate, current_user: User = Depends(get_current_active_user)):
 	"""
 	Update a vehicle's information based on the vehicle's unique ID.
 
@@ -152,7 +154,7 @@ async def update_vehicle(vehicles_id: int, vehicles: VehiclesUpdate):
 	)
 
 @app.delete('/{vehicles_id}')
-async def delete_vehicle(vehicles_id: int):
+async def delete_vehicle(vehicles_id: int, current_user: User = Depends(get_current_active_user)):
 
 	"""
 	Delete a vehicle's information by specifying their unique identifier. 

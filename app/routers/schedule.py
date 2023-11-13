@@ -38,7 +38,7 @@ app = APIRouter(
 )
 
 @app.get('/')
-async def read_all_schedule():
+async def read_all_schedule(current_user: User = Depends(get_current_active_user)):
 	return data['schedule']
 
 @app.get('/search')
@@ -50,7 +50,8 @@ async def search_schedule(
 	arrival_time : str = None,
 	vehicle_id : int = None,
 	driver_id : int = None,
-	status : str = None
+	status : str = None,
+	current_user: User = Depends(get_current_active_user)
 
 ):
 	"""
@@ -91,7 +92,7 @@ async def search_schedule(
 		)
 
 @app.get('/{schedule_id}')
-async def read_schedule(schedule_id: int):
+async def read_schedule(schedule_id: int, current_user: User = Depends(get_current_active_user)):
 	"""
 	Retrieve information about a transportation schedule based on their unique identifier. 
 	
@@ -148,7 +149,7 @@ async def add_schedule(schedules: TransportSchedule, current_user: User = Depend
 	)
 
 @app.put('/{schedule_id}')
-async def update_schedule(schedule_id: int, schedules: TransportScheduleUpdate):
+async def update_schedule(schedule_id: int, schedules: TransportScheduleUpdate, current_user: User = Depends(get_current_active_user)):
 	"""
 	Update a schedule's information based on the schedule's unique ID.
 
@@ -186,7 +187,7 @@ async def update_schedule(schedule_id: int, schedules: TransportScheduleUpdate):
 	)
 		
 @app.delete('/{schedule_id}')
-async def delete_schedule(schedule_id: int):
+async def delete_schedule(schedule_id: int, current_user: User = Depends(get_current_active_user)):
 
 	"""
 	Delete a schedule's information by specifying their unique identifier. 
