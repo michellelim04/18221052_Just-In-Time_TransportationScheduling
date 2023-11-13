@@ -6,4 +6,5 @@ jose
 python-multipart
 passlib
 jwt
-
+bcrypt
+cryptography
