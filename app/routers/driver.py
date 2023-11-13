@@ -1,7 +1,9 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 import json
 from pydantic import BaseModel
 from typing import Optional
+from ..main import *
+from ..auth import get_current_active_user, User
 
 # model for adding driver
 class Drivers(BaseModel): 
@@ -39,7 +41,7 @@ async def read_all_driver():
 	return data['driver']
 
 @app.get('/search')
-async def search_drivers(name: str = None, license_no: str = None, date_of_birth: str = None, contact_no: str = None):
+async def search_drivers(name: str = None, license_no: str = None, date_of_birth: str = None, contact_no: str = None, current_user: User = Depends(get_current_active_user)):
 	"""
 	Search for drivers based on one or more parameters.
 	 
@@ -90,7 +92,7 @@ async def read_driver(drivers_id: int):
 	)
 
 @app.post('/')
-async def add_driver(drivers: Drivers):
+async def add_driver(drivers: Drivers, current_user: User = Depends(get_current_active_user)):
 	"""
 	Add a driver's information in the dataset based on the driver's unique identifier.
 

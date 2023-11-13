@@ -1,7 +1,9 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 import json
 from pydantic import BaseModel
 from typing import Optional
+from ..main import *
+from ..auth import get_current_active_user, User
 
 class TransportSchedule(BaseModel): 
 	schedule_id : int
@@ -107,7 +109,7 @@ async def read_schedule(schedule_id: int):
 	)
 
 @app.post('/')
-async def add_schedule(schedules: TransportSchedule):
+async def add_schedule(schedules: TransportSchedule, current_user: User = Depends(get_current_active_user)):
 	"""
 	Add a schedule's information in the dataset based on the schedule's unique identifier.
 
