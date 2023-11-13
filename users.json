@@ -1,0 +1,30 @@
+{
+  "michelle1616": {
+    "user_id": 1,
+    "username": "michelle1616",
+    "name": "Michelle",
+    "password_preprocessed": "",
+    "hashed_password": "$2b$12$sUZZbVES9Qmli9oF4QaE4OJudWfBYSeWbC6.sg9yMD38qCwYeyhKC",
+    "isOwner": 1,
+    "idAdmin": 1,
+    "disabled": 0
+  },
+  "userNew": {
+    "user_id": 1,
+    "username": "userNew",
+    "password_preprocessed": "",
+    "hashed_password": "$2b$12$30fvrIiq1BBIh6jDQWDZsO2luh3AqsISRHl2lEw7f5yIeZnkMPf4W",
+    "isOwner": 0,
+    "isAdmin": 1,
+    "disabled": 0
+  },
+  "userNew1": {
+    "user_id": 2,
+    "username": "userNew1",
+    "password_preprocessed": "",
+    "hashed_password": "$2b$12$5ZjQft5Y3c03L9QT3s3mQev6nEOLYyGK4RBv5ZwMP9uKVH0XnbkmS",
+    "isOwner": 0,
+    "isAdmin": 1,
+    "disabled": 0
+  }
+}

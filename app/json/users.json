@@ -1,0 +1,21 @@
+{
+  "michelle1616": {
+    "user_id": 1,
+    "username": "michelle1616",
+    "name": "Michelle",
+    "password_preprocessed": "",
+    "hashed_password": "$2b$12$sUZZbVES9Qmli9oF4QaE4OJudWfBYSeWbC6.sg9yMD38qCwYeyhKC",
+    "isOwner": 1,
+    "idAdmin": 1,
+    "disabled": 0
+  },
+  "usernew": {
+    "user_id": 2,
+    "username": "usernew",
+    "password_preprocessed": "",
+    "hashed_password": "$2b$12$0138Y8IbGBE0hZaBmcxc7ucDen4XW7n0k8xmdBNP9c/oC/ZZmYqu.",
+    "isOwner": 0,
+    "isAdmin": 1,
+    "disabled": 0
+  }
+}
