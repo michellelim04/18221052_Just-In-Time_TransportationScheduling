@@ -2,3 +2,6 @@ fastapi
 pydantic
 typing
 uvicorn
+jose
+python-multipart
+passlib
