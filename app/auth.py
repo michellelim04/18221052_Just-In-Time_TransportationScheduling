@@ -71,11 +71,7 @@ def authenticate_user(users_data, username:str, password:str):
     return user
 
 
-    
 
-
-
-print (get_password_hash("test123"))
 
 
     
