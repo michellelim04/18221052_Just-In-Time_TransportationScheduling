@@ -4,6 +4,13 @@ from pydantic import BaseModel
 from typing import Optional
 from ..main import *
 from ..auth import get_current_active_user, User
+import requests
+from dotenv import load_dotenv
+load_dotenv()
+import os
+import haversine as hs
+from haversine import Unit
+from datetime import datetime, timedelta
 
 class TransportSchedule(BaseModel): 
 	schedule_id : int
@@ -11,7 +18,7 @@ class TransportSchedule(BaseModel):
 	departure_location : str
 	arrival_location : str
 	departure_time : str
-	arrival_time : str
+	arrival_time : Optional[str] = None
 	vehicle_id : int
 	driver_id : int
 	status : str
@@ -137,8 +144,27 @@ async def add_schedule(schedules: TransportSchedule, current_user: User = Depend
 		if schedule_schedules['schedule_id'] == schedules_dict['schedule_id']:
 			schedules_found = True
 			return "Schedule ID "+str(schedules_dict['schedule_id'])+" exists."
+	# create new schedule
+	if not schedules_found: 
+		# login
+		token = loginOtherAPI()
+		
+		# get arrival coordinate
+		response = await getLatLongUni(token, schedules_dict["arrival_location"])
+		print(response)
+
+		# get departure coordinate
+		response1 = await getLatLongRest(token, schedules_dict["departure_location"])
+		print(response1)
+
+		# convert response to tuple
+		departureCoordinate = (response1["lat"], response1["long"])
+		arrivalCoordinate = (response["lat"], response["long"])
+		
+		# insert calculated arrival time
+		schedules_dict["arrival_time"] = getETA(schedules_dict["departure_time"], calculateDuration(departureCoordinate, arrivalCoordinate))
 	
-	if not schedules_found:
+		
 		data['schedule'].append(schedules_dict)
 		with open(json_filename,"w") as write_file:
 			json.dump(data, write_file)
@@ -175,6 +201,42 @@ async def update_schedule(schedule_id: int, schedules: TransportScheduleUpdate, 
 		if schedule_schedules['schedule_id'] == schedule_id:
 			schedules_found = True
 			for field, value in schedules_dict.items():
+				# match to-be-updated fields is related to arrival time
+				if field in ["departure_location", "arrival_location", "departure_time"]:
+					# login
+					token = loginOtherAPI() 
+					
+					# get arrival coordinate
+					response = await getLatLongUni(token, schedule_schedules["arrival_location"])
+					print(response)
+
+					# get departure coordinate
+					response1 = await getLatLongRest(token, schedule_schedules["departure_location"])
+					print(response1)
+
+					# convert response to tuple
+					departureCoordinate = (response1["lat"], response1["long"])
+					arrivalCoordinate = (response["lat"], response["long"])
+					departure_time = schedule_schedules["departure_time"]
+
+					# update value
+					if field == "departure_location":
+						response1 = await getLatLongRest(token, value)
+						departureCoordinate = (response1["lat"], response1["long"])
+					elif field == "arrival_location":
+						response = await getLatLongUni(token, value)
+						arrivalCoordinate = (response["lat"], response["long"])
+					elif field == "departure_time":
+						departure_time = value
+
+					print (departureCoordinate, arrivalCoordinate, departure_time)
+
+					# recalculate arrival time
+					if departureCoordinate and arrivalCoordinate and departure_time:
+						duration = calculateDuration(departureCoordinate, arrivalCoordinate)
+						arrivalTime = getETA(departure_time, duration)
+						data['schedule'][schedule_idx]["arrival_time"] = arrivalTime
+
 				data['schedule'][schedule_idx][field] = value
 			with open(json_filename,"w") as write_file:
 				json.dump(data, write_file)
@@ -214,3 +276,72 @@ async def delete_schedule(schedule_id: int, current_user: User = Depends(get_cur
 	raise HTTPException(
 		status_code=404, detail=f'Schedule not found'
 	)
+
+# get authorization token from other API
+def loginOtherAPI ():
+	# get token
+	url = "http://20.247.169.82/login"
+
+	# username & password (need to get from the database)
+	username = os.environ.get("username")
+	password = os.environ.get("password")
+
+	# create a dictionary with the username and password
+	data = { "username" : username, "password" : password }
+
+	# Make a POST request to the API to get the token
+	response = requests.post(url, data=data)
+
+	# Check if the request was successful (status code 200)
+	if response.status_code == 200:
+		# Get the token from the response
+		token = response.json().get("access_token")
+		print("Token:", token)
+	else:
+		print("Failed to get the token. Status code:", response.status_code)
+
+	return token
+
+# get latitude and longitude of university
+async def getLatLongUni (token, university_name):
+	
+	# Make a GET request to the API to get the Latitude and Longitude of the University
+	url = "http://20.247.169.82/admin/university/{univeristy_name}?university_name="+university_name
+
+	# Add the token to the header of the request
+	headers = {"Authorization" : "Bearer " + token}
+
+	# Make the request
+	response = requests.get(url, headers=headers)
+	print (response.json())
+
+	return response.json()
+
+# get latitude and longitude of restaurant
+async def getLatLongRest (token, restaurant_name):
+	
+	# Make a GET request to the API to get the Latitude and Longitude of the Restaurant
+	url = "http://20.247.169.82/users/restaurants/name/"+restaurant_name
+
+	# Add the token to the header of the request
+	headers = {"Authorization" : "Bearer " + token}
+
+	# Make the request
+	response = requests.get(url, headers=headers)
+	print (response.json())
+
+	return response.json()[0]
+
+# calculate travel duration
+def calculateDuration (departureCoordinate, arrivalCoordinate):
+	averageSpeed_mpers = 20000/3600
+	distance_m = hs.haversine(departureCoordinate,arrivalCoordinate, unit=Unit.METERS)
+	duration = distance_m / averageSpeed_mpers
+	print(duration)
+	return duration
+
+# get ETA return arrival time estimated
+def getETA (departure_time, duration):
+	departure_time = datetime.strptime(departure_time, "%Y-%m-%d %H:%M:%S")
+	arrival_time = departure_time+timedelta(seconds=duration)
+	return arrival_time.strftime("%Y-%m-%d %H:%M:%S")

@@ -8,3 +8,5 @@ passlib
 jwt
 bcrypt
 cryptography
+python-dotenv
+haversine
