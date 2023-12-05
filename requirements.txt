@@ -10,3 +10,4 @@ bcrypt
 cryptography
 python-dotenv
 haversine
+requests
