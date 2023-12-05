@@ -280,7 +280,7 @@ async def delete_schedule(schedule_id: int, current_user: User = Depends(get_cur
 # get authorization token from other API
 def loginOtherAPI ():
 	# get token
-	url = "http://20.247.169.82/login"
+	url = "http://ucanteen2.g3cwh8fvd9frdmeg.southeastasia.azurecontainer.io/login" 
 
 	# username & password (need to get from the database)
 	username = os.environ.get("username")
@@ -306,7 +306,7 @@ def loginOtherAPI ():
 async def getLatLongUni (token, university_name):
 	
 	# Make a GET request to the API to get the Latitude and Longitude of the University
-	url = "http://20.247.169.82/admin/university/{univeristy_name}?university_name="+university_name
+	url = "http://ucanteen2.g3cwh8fvd9frdmeg.southeastasia.azurecontainer.io/admin/university/{univeristy_name}?university_name="+university_name
 
 	# Add the token to the header of the request
 	headers = {"Authorization" : "Bearer " + token}
@@ -321,7 +321,7 @@ async def getLatLongUni (token, university_name):
 async def getLatLongRest (token, restaurant_name):
 	
 	# Make a GET request to the API to get the Latitude and Longitude of the Restaurant
-	url = "http://20.247.169.82/users/restaurants/name/"+restaurant_name
+	url = "http://ucanteen2.g3cwh8fvd9frdmeg.southeastasia.azurecontainer.io/users/restaurants/name/"+restaurant_name
 
 	# Add the token to the header of the request
 	headers = {"Authorization" : "Bearer " + token}
