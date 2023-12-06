@@ -34,9 +34,15 @@ class TransportScheduleUpdate(BaseModel):
 	status: Optional[str] = None
 
 json_filename="./app/json/schedule.json"
+json_filename1="./app/json/driver.json"
+json_filename2="./app/json/vehicle.json"
 
 with open(json_filename,"r") as read_file:
 	data = json.load(read_file)
+with open(json_filename1,"r") as read_file1:
+	data_driver = json.load(read_file1)
+with open(json_filename2,"r") as read_file2:
+	data_vehicle = json.load(read_file2)
 
 app = APIRouter(
 	prefix="/schedule",
@@ -126,19 +132,64 @@ async def add_schedule(schedules: TransportSchedule, current_user: User = Depend
 	
 	Insert the parameter(s) in the request body as follows:
 	- `schedule_id`: (Required) The ID of the schedule.
-	- `route_name`: (Optional) The name of the route.
-	- `departure_location`: (Optional) The name of the departure location.
-	- `arrival_location`: (Optional) The name of the arrival location.
-	- `departure_time`: (Optional) The time of departure in format 'YYYY-MM-DD HH:MM:SS'.
-	- `arrival_time`: (Optional) The time of arrival in format 'YYYY-MM-DD HH:MM:SS'.
-	- `vehicle_id`: (Optional) The ID of the vehicle.
-	- `driver_id`: (Optional) The ID of the driver.
-	- `status`: (Optional) The status of the transportation trip (SCHEDULED/DEPARTED/ONGOING/ARRIVED).
+	- `route_name`: (Required) The name of the route.
+	- `departure_location`: (Required) The name of the departure location.
+	- `arrival_location`: (Required) The name of the arrival location.
+	- `departure_time`: (Required) The time of departure in format 'YYYY-MM-DD HH:MM:SS'.
+	- `vehicle_id`: (Required) The ID of the vehicle.
+	- `driver_id`: (Required) The ID of the driver.
+	- `status`: (Required) The status of the transportation trip (SCHEDULED/DEPARTED/ONGOING/ARRIVED).
 		
 	Returns the schedule's information if added.
 	If the schedule already exists, it returns a message indicating the schedule exists.
 	"""
 	schedules_dict = schedules.dict()
+
+	print(schedules_dict)
+	
+	# arrival time should not be provided
+	if schedules_dict["arrival_time"] is not None:
+		raise HTTPException (
+			status_code = 400, 
+			detail = "Arrival time should not be provided. It will be calculated based on departure time and location."
+		)
+	
+	# status validation
+	if schedules_dict["status"] not in ["SCHEDULED", "DEPARTED", "ONGOING", "ARRIVED"]:
+		raise HTTPException (
+			status_code = 400, 
+			detail = "Status value should be SCHEDULED/DEPARTED/ONGOING/ARRIVED."
+		)
+	
+	# vehicle id validation
+	vehicle_found = False
+	for vehicle_vehicles in data_vehicle['vehicle']:
+		if vehicle_vehicles['vehicle_id'] == schedules_dict['vehicle_id']:
+			vehicle_found = True
+	if not vehicle_found:
+		raise HTTPException(
+			status_code=404, detail=f'Vehicle not found'
+		)
+	
+	# driver id validation
+	driver_found = False
+	for driver_drivers in data_driver['driver']:
+		if driver_drivers['driver_id'] == schedules_dict['driver_id']:
+			driver_found = True
+	if not driver_found:
+		raise HTTPException(
+			status_code=404, detail=f'Driver not found'
+		)
+
+	# datetime format validation
+	try:
+		datetime.strptime(schedules_dict["departure_time"], '%Y-%m-%d %H:%M:%S')
+	except ValueError:
+		raise HTTPException(
+		status_code=400, 
+		detail="Incorrect time format. It should be 'YYYY-MM-DD HH:MM:SS'."
+	)
+	
 	schedules_found = False
 	for schedule_schedules in data['schedule']:
 		if schedule_schedules['schedule_id'] == schedules_dict['schedule_id']:
@@ -173,6 +224,7 @@ async def add_schedule(schedules: TransportSchedule, current_user: User = Depend
 	raise HTTPException(
 		status_code=404, detail=f'Schedule not found'
 	)
+	
 
 @app.put('/{schedule_id}')
 async def update_schedule(schedule_id: int, schedules: TransportScheduleUpdate, current_user: User = Depends(get_current_active_user)):
@@ -185,7 +237,6 @@ async def update_schedule(schedule_id: int, schedules: TransportScheduleUpdate, 
 	- `departure_location`: (Optional) The name of the departure location.
 	- `arrival_location`: (Optional) The name of the arrival location.
 	- `departure_time`: (Optional) The time of departure in format 'YYYY-MM-DD HH:MM:SS'.
-	- `arrival_time`: (Optional) The time of arrival in format 'YYYY-MM-DD HH:MM:SS'.
 	- `vehicle_id`: (Optional) The ID of the vehicle.
 	- `driver_id`: (Optional) The ID of the driver.
 	- `status`: (Optional) The status of the transportation trip (SCHEDULED/DEPARTED/ONGOING/ARRIVED).
@@ -196,6 +247,56 @@ async def update_schedule(schedule_id: int, schedules: TransportScheduleUpdate, 
 	Else, returns "Schedule ID not found." to indicate the specified schedule to be updated does not exist.
 	"""
 	schedules_dict = schedules.dict(exclude_unset=True)
+
+	print(schedules_dict)
+	
+	# arrival time should not be provided
+	if 'arrival_time' in schedules_dict:
+		raise HTTPException (
+			status_code = 400, 
+			detail = "Arrival time should not be provided. It will be calculated based on departure time and location."
+		)
+	
+	# status validation
+	if 'status' in schedules_dict:
+		if schedules_dict["status"] not in ["SCHEDULED", "DEPARTED", "ONGOING", "ARRIVED"]:
+			raise HTTPException (
+				status_code = 400, 
+				detail = "Status value should be SCHEDULED/DEPARTED/ONGOING/ARRIVED."
+			)
+	
+	# vehicle id validation
+	if 'vehicle_id' in schedules_dict:
+		vehicle_found = False
+		for vehicle_vehicles in data_vehicle['vehicle']:
+			if vehicle_vehicles['vehicle_id'] == schedules_dict['vehicle_id']:
+				vehicle_found = True
+		if not vehicle_found:
+			raise HTTPException(
+				status_code=404, detail=f'Vehicle not found'
+			)
+	
+	# driver id validation
+	if 'driver_id' in schedules_dict:
+		driver_found = False
+		for driver_drivers in data_driver['driver']:
+			if driver_drivers['driver_id'] == schedules_dict['driver_id']:
+				driver_found = True
+		if not driver_found:
+			raise HTTPException(
+				status_code=404, detail=f'Driver not found'
+			)
+
+	# datetime format validation
+	if 'departure_time' in schedules_dict:
+		try:
+			datetime.strptime(schedules_dict["departure_time"], '%Y-%m-%d %H:%M:%S')
+		except ValueError:
+			raise HTTPException(
+			status_code=400, 
+			detail="Incorrect time format. It should be 'YYYY-MM-DD HH:MM:SS'."
+		)
+
 	schedules_found = False
 	for schedule_idx, schedule_schedules in enumerate(data['schedule']):
 		if schedule_schedules['schedule_id'] == schedule_id:
@@ -313,6 +414,14 @@ async def getLatLongUni (token, university_name):
 
 	# Make the request
 	response = requests.get(url, headers=headers)
+
+	# check if university exists in UCanteen API
+	if response.status_code == 404:
+		raise HTTPException(
+			status_code=404,
+			detail=f"University not found"
+		)
+	
 	print (response.json())
 
 	return response.json()
@@ -328,6 +437,14 @@ async def getLatLongRest (token, restaurant_name):
 
 	# Make the request
 	response = requests.get(url, headers=headers)
+
+	# check if restaurant exists in UCanteen API
+	if response.status_code == 404:
+		raise HTTPException(
+			status_code=404,
+			detail=f"Restaurant not found"
+		)
+
 	print (response.json())
 
 	return response.json()[0]

@@ -11,3 +11,6 @@ cryptography
 python-dotenv
 haversine
 requests
+re
+email_validator
+datetime

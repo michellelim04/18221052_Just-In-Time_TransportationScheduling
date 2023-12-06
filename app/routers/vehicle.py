@@ -4,6 +4,7 @@ from pydantic import BaseModel
 from typing import Optional
 from ..main import *
 from ..auth import get_current_active_user, User
+import re
 
 class Vehicles(BaseModel): 
 	vehicle_id : int
@@ -43,7 +44,7 @@ async def search_vehicle(vehicles_id: int = None, make: str = None, model: str =
 	- `make`: (Optional) The make of the vehicle.
 	- `model`: (Optional) The vehicle's model name.
 	- `year`: (Optional) The vehicle's manufactured year.
-	- `registration_no`: (Optional) The vehicle's registration number.
+	- `registration_no`: (Optional) The vehicle's registration plate.
 
 	Returns a list of matching vehicles.
 	"""
@@ -97,12 +98,37 @@ async def add_vehicle(vehicles: Vehicles, current_user: User = Depends(get_curre
 	- `make`: (Optional) The make of the vehicle.
 	- `model`: (Optional) The vehicle's model name.
 	- `year`: (Optional) The vehicle's manufactured year.
-	- `registration_no`: (Optional) The vehicle's registration number.
+	- `registration_no`: (Optional) The vehicle's registration plate.
 
 	Returns the vehicle's information if added.
 	If the vehicle already exists, it returns a message indicating the vehicle exists.
 	"""
 	vehicles_dict = vehicles.dict()
+
+	# Validate registration_no
+	if not re.match(r'^[A-Z]{1,2}\d{1,4}[A-Z]{1,3}$', vehicles_dict["registration_no"]):
+		raise HTTPException(
+			status_code=400, 
+			detail="Incorrect registration plate format."
+		)
+	
+	# Validate year
+	if vehicles_dict["year"] > 2040 or vehicles_dict["year"] < 1900:
+		raise HTTPException(
+			status_code=400, 
+			detail="Invalid manufacture year."
+		)
+	
+	# Validate unique registration no
+	vehicles_unique = True
+	for vehicle_vehicles in data['vehicle']:
+		if vehicle_vehicles['registration_no'] == vehicles_dict['registration_no']:
+			vehicles_unique = False
+			raise HTTPException(
+				status_code=400, 
+				detail="Registration Plate "+str(vehicles_dict['registration_no'])+" exists."
+			)
+	
 	vehicles_found = False
 	for vehicle_vehicles in data['vehicle']:
 		if vehicle_vehicles['vehicle_id'] == vehicles_dict['vehicle_id']:
@@ -129,7 +155,7 @@ async def update_vehicle(vehicles_id: int, vehicles: VehiclesUpdate, current_use
 	- `make`: (Optional) The make of the vehicle.
 	- `model`: (Optional) The vehicle's model name.
 	- `year`: (Optional) The vehicle's manufactured year.
-	- `registration_no`: (Optional) The vehicle's registration number.
+	- `registration_no`: (Optional) The vehicle's registration plate.
 
 	For the parameters that are not to be updated, please delete them before executing the function. 
 
@@ -137,6 +163,34 @@ async def update_vehicle(vehicles_id: int, vehicles: VehiclesUpdate, current_use
 	Else, returns "Vehicle ID not found." to indicate the specified vehicle to be updated does not exist.
 	"""
 	vehicles_dict = vehicles.dict(exclude_unset=True)
+
+	# Validate registration_no
+	if 'registration_no' in vehicles_dict:
+		if not re.match(r'^[A-Z]{1,2}\d{1,4}[A-Z]{1,3}$', vehicles_dict["registration_no"]):
+			raise HTTPException(
+				status_code=400, 
+				detail="Incorrect registration plate format."
+			)
+		
+	# Validate year
+	if 'year' in vehicles_dict:
+		if vehicles_dict["year"] > 2040 or vehicles_dict["year"] < 1900:
+			raise HTTPException(
+				status_code=400, 
+				detail="Invalid manufacture year."
+			)
+		
+	# Validate unique registration no
+	if 'registration_no' in vehicles_dict:
+		vehicles_unique = True
+		for vehicle_vehicles in data['vehicle']:
+			if vehicle_vehicles['registration_no'] == vehicles_dict['registration_no']:
+				vehicles_unique = False
+				raise HTTPException(
+				status_code=400, 
+				detail="Registration Plate "+str(vehicles_dict['registration_no'])+" exists."
+			)
+
 	vehicles_found = False
 	for vehicle_idx, vehicle_vehicles in enumerate(data['vehicle']):
 		if vehicle_vehicles['vehicle_id'] == vehicles_id:
