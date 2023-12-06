@@ -119,7 +119,7 @@ async def add_vehicle(vehicles: Vehicles, current_user: User = Depends(get_curre
 			detail="Invalid manufacture year."
 		)
 	
-	# Validate unique registration no
+	# Validate unique registration_no
 	vehicles_unique = True
 	for vehicle_vehicles in data['vehicle']:
 		if vehicle_vehicles['registration_no'] == vehicles_dict['registration_no']:
@@ -180,7 +180,7 @@ async def update_vehicle(vehicles_id: int, vehicles: VehiclesUpdate, current_use
 				detail="Invalid manufacture year."
 			)
 		
-	# Validate unique registration no
+	# Validate unique registration_no
 	if 'registration_no' in vehicles_dict:
 		vehicles_unique = True
 		for vehicle_vehicles in data['vehicle']:

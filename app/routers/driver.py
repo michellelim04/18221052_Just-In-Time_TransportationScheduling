@@ -147,6 +147,16 @@ async def add_driver(drivers: Drivers, current_user: User = Depends(get_current_
 			status_code=400, 
 			detail="Incorrect license number format. It should consists exactly 14 digits."
 		)
+	
+	# Validate unique license no
+	drivers_unique = True
+	for driver_drivers in data['driver']:
+		if driver_drivers['license_no'] == drivers_dict['license_no']:
+			drivers_unique = False
+			raise HTTPException(
+				status_code=400, 
+				detail="License Number "+str(drivers_dict['license_no'])+" exists."
+			)
 
 	drivers_found = False
 	for driver_drivers in data['driver']:
@@ -222,6 +232,17 @@ async def update_driver(drivers_id: int, drivers: DriverUpdate, current_user: Us
 				status_code=400, 
 				detail="Incorrect license number format. It should consists exactly 14 digits."
 			)
+		
+	# Validate unique license_no
+	if 'license_no' in drivers_dict:
+		drivers_unique = True
+		for driver_drivers in data['driver']:
+			if driver_drivers['license_no'] == drivers_dict['license_no']:
+				drivers_unique = False
+				raise HTTPException(
+					status_code=400, 
+					detail="License Number "+str(drivers_dict['license_no'])+" exists."
+				)
 
 	drivers_found = False
 	for driver_idx, driver_drivers in enumerate(data['driver']):
