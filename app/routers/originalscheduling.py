@@ -191,6 +191,16 @@ async def add_original_schedule(schedules: TransportSchedule, current_user: User
 		status_code=400, 
 		detail="Incorrect time format. It should be 'YYYY-MM-DD HH:MM:SS'."
 	)
+	
+    # datetime format validation
+	try:
+		datetime.strptime(schedules_dict["arrival_time"], '%Y-%m-%d %H:%M:%S')
+	except ValueError:
+		raise HTTPException(
+		status_code=400, 
+		detail="Incorrect time format. It should be 'YYYY-MM-DD HH:MM:SS'."
+	)
+    
 
 	schedules_found = False
 	for schedule_schedules in data['schedule']:
