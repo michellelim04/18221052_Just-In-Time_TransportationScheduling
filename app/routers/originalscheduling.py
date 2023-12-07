@@ -46,7 +46,11 @@ app = APIRouter(
 
 @app.get('/')
 async def read_all_original_schedule(current_user: User = Depends(get_current_active_user)):
-	return data['schedule']
+	data = None
+	with open (json_filename,"r") as read_file:
+		data = json.load(read_file)
+	return data["schedule"]
+	
 
 @app.get('/search')
 async def search_original_schedule(
@@ -76,6 +80,10 @@ async def search_original_schedule(
 
 	Returns a list of matching schedules.
 	"""
+	data = None
+	with open (json_filename,"r") as read_file:
+		data = json.load(read_file)
+		
 	matching_schedules = []
 
 	for schedule in data['schedule']:
@@ -108,6 +116,10 @@ async def read_original_schedule(schedule_id: int, current_user: User = Depends(
 		
 	Returns detailed information of a transportation schedule. 
 	"""
+	data = None
+	with open (json_filename,"r") as read_file:
+		data = json.load(read_file)
+		
 	for schedule_schedules in data['schedule']:
 		print(schedule_schedules)
 		if schedule_schedules['schedule_id'] == schedule_id:
@@ -138,6 +150,10 @@ async def add_original_schedule(schedules: TransportSchedule, current_user: User
 	Returns the schedule's information if added.
 	If the schedule already exists, it returns a message indicating the schedule exists.
 	"""
+	data = None
+	with open (json_filename,"r") as read_file:
+		data = json.load(read_file)
+		
 	schedules_dict = schedules.dict()
 	
     # status validation
@@ -213,6 +229,10 @@ async def update_original_schedule(schedule_id: int, schedules: TransportSchedul
 	If the schedule with the specified ID exists, returns "updated" to indicate a successful update.
 	Else, returns "Schedule ID not found." to indicate the specified schedule to be updated does not exist.
 	"""
+	data = None
+	with open (json_filename,"r") as read_file:
+		data = json.load(read_file)
+		
 	schedules_dict = schedules.dict(exclude_unset=True)
 	
     # status validation
@@ -283,6 +303,9 @@ async def delete_original_schedule(schedule_id: int, current_user: User = Depend
 	Returns "deleted" to indicate a successful deletion of a schedule's data
 	with the specified ID. 
 	"""
+	data = None
+	with open (json_filename,"r") as read_file:
+		data = json.load(read_file)
 
 	schedules_found = False
 	for schedule_idx, schedule_schedules in enumerate(data['schedule']):
