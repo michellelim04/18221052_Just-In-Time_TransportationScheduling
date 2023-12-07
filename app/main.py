@@ -1,6 +1,6 @@
 from fastapi  import FastAPI, Depends
 
-from .routers import driver, schedule, vehicle
+from .routers import driver, schedule, vehicle, originalscheduling
 
 from .auth import *
 
@@ -10,11 +10,16 @@ tags_metadata = [
 		  "description" : "This route of Driver's Directory allows you to Search, Get, Add, Update, and Delete Drivers' Data."},
 	  {
 		  "name" : "schedule",
-		  "description" : "This route of Transportation Scheduling allows you to Search, Get, Add, Update, and Delete Schedules' Data. The Update feature ensures Just-In-Time Delivery by allowing Transportation Status Updates"},
+		  "description" : "This route of Transportation Scheduling is already integrated with U-Canteen API and allows you to Search, Get, Add, Update, and Delete Schedules' Data. This API calculates the distance between the departure and arrival location to estimate the arrival time hence ensuring Just-In-Time Delivery from Listed Restaurants to Universities by Motorcycle."},
 
 	  {
 		  "name" : "vehicle",
-		  "description" : "This route of Vehicle's Directory allows you to Search, Get, Add, Update, and Delete Vehicles' Data."}
+		  "description" : "This route of Vehicle's Directory allows you to Search, Get, Add, Update, and Delete Vehicles' Data."},
+
+	  {
+		  "name" : "originalschedule",
+		  "description" : "This route of Transportation Scheduling allows you to Search, Get, Add, Update, and Delete Schedules' Data. The Update feature ensures Just-In-Time Delivery by allowing Transportation Status Updates."}
+            
 
   ]
 
@@ -24,6 +29,7 @@ app = FastAPI(openapi_tags=tags_metadata)
 app.include_router(driver.app)
 app.include_router(schedule.app)
 app.include_router(vehicle.app)
+app.include_router(originalscheduling.app)
 app.include_router(router)
 
 

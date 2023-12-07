@@ -105,10 +105,10 @@ async def add_driver(drivers: Drivers, current_user: User = Depends(get_current_
 	Insert the parameter(s) in the request body as follows:
 	- `driver_id`: (Required) The ID of the driver.
 	- `name`: (Required) The name of the driver.
-	- `license_no`: (Required) The driver's license number.
-	- `date_of_birth`: (Required) The driver's date of birth.
-	- `contact_no`: (Required) The driver's contact number.
-	- `email`: (Required) The email of the driver.
+	- `license_no`: (Required) The driver's license number which consists of exactly 14 digits and unique.
+	- `date_of_birth`: (Required) The driver's date of birth in the format YYYY-MM-DD.
+	- `contact_no`: (Required) The driver's contact number in the format CC-XXXX-XXX-XXX.
+	- `email`: (Required) The email of the driver must contain one '@'.
 	- `address`: (Required) The driver's address.
 		
 	Returns the driver's information if added.
@@ -182,10 +182,10 @@ async def update_driver(drivers_id: int, drivers: DriverUpdate, current_user: Us
 	In the request body, specify the driver's unique driver ID and put updates of the parameters you want to update:
 	- `driver_id`: (Required) The ID of the driver.
 	- `name`: (Optional) The name of the driver.
-	- `license_no`: (Optional) The driver's license number.
-	- `date_of_birth`: (Optional) The driver's date of birth.
-	- `contact_no`: (Optional) The driver's contact number.
-	- `email`: (Optional) The email address of the driver.
+	- `license_no`: (Optional) The driver's license number which consists of exactly 14 digits and unique.
+	- `date_of_birth`: (Optional) The driver's date of birth in the format YYYY-MM-DD.
+	- `contact_no`: (Optional) The driver's contact number in the format CC-XXXX-XXX-XXX..
+	- `email`: (Optional) The email address of the driver must contain one '@'.
 	- `address`: (Optional) The driver's address.
 
 	For the parameters that are not to be updated, please delete them before executing the function.

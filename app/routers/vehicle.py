@@ -98,7 +98,7 @@ async def add_vehicle(vehicles: Vehicles, current_user: User = Depends(get_curre
 	- `make`: (Optional) The make of the vehicle.
 	- `model`: (Optional) The vehicle's model name.
 	- `year`: (Optional) The vehicle's manufactured year.
-	- `registration_no`: (Optional) The vehicle's registration plate.
+	- `registration_no`: (Optional) The unique vehicle's registration plate.
 
 	Returns the vehicle's information if added.
 	If the vehicle already exists, it returns a message indicating the vehicle exists.
@@ -155,7 +155,7 @@ async def update_vehicle(vehicles_id: int, vehicles: VehiclesUpdate, current_use
 	- `make`: (Optional) The make of the vehicle.
 	- `model`: (Optional) The vehicle's model name.
 	- `year`: (Optional) The vehicle's manufactured year.
-	- `registration_no`: (Optional) The vehicle's registration plate.
+	- `registration_no`: (Optional) The unique vehicle's registration plate.
 
 	For the parameters that are not to be updated, please delete them before executing the function. 
 
