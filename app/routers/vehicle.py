@@ -43,7 +43,7 @@ async def search_vehicle(vehicles_id: int = None, make: str = None, model: str =
 	- `vehicles_id`: (Optional) The ID of the vehicle.
 	- `make`: (Optional) The make of the vehicle.
 	- `model`: (Optional) The vehicle's model name.
-	- `year`: (Optional) The vehicle's manufactured year.
+	- `year`: (Optional) The vehicle's manufacture year.
 	- `registration_no`: (Optional) The vehicle's registration plate.
 
 	Returns a list of matching vehicles.
@@ -95,10 +95,10 @@ async def add_vehicle(vehicles: Vehicles, current_user: User = Depends(get_curre
 	
 	Insert the parameter(s) in the request body as follows:
 	- `vehicle_id`: (Required) The ID of the vehicle.
-	- `make`: (Optional) The make of the vehicle.
-	- `model`: (Optional) The vehicle's model name.
-	- `year`: (Optional) The vehicle's manufactured year.
-	- `registration_no`: (Optional) The unique vehicle's registration plate.
+	- `make`: (Required) The make of the vehicle.
+	- `model`: (Required) The vehicle's model name.
+	- `year`: (Required) The vehicle's manufacture year.
+	- `registration_no`: (Required) The unique vehicle's registration plate.
 
 	Returns the vehicle's information if added.
 	If the vehicle already exists, it returns a message indicating the vehicle exists.
@@ -154,7 +154,7 @@ async def update_vehicle(vehicles_id: int, vehicles: VehiclesUpdate, current_use
 	- `vehicle_id`: (Required) The ID of the vehicle.
 	- `make`: (Optional) The make of the vehicle.
 	- `model`: (Optional) The vehicle's model name.
-	- `year`: (Optional) The vehicle's manufactured year.
+	- `year`: (Optional) The vehicle's manufacture year.
 	- `registration_no`: (Optional) The unique vehicle's registration plate.
 
 	For the parameters that are not to be updated, please delete them before executing the function. 

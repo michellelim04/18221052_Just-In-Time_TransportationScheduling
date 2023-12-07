@@ -39,7 +39,7 @@ with open(json_filename2,"r") as read_file2:
 	data_vehicle = json.load(read_file2)
 
 app = APIRouter(
-	prefix="/transportationoriginalsched",
+	prefix="/originalsched",
 	tags=["originalschedule"],
   responses={404: {"description": "Not found"}}
 )
