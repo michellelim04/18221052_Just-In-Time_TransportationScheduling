@@ -138,14 +138,14 @@ async def add_original_schedule(schedules: TransportSchedule, current_user: User
 	
 	Insert the parameter(s) in the request body as follows:
 	- `schedule_id`: (Required) The ID of the schedule.
-	- `route_name`: (Optional) The name of the route.
-	- `departure_location`: (Optional) The name of the departure location.
-	- `arrival_location`: (Optional) The name of the arrival location.
-	- `departure_time`: (Optional) The time of departure in format 'YYYY-MM-DD HH:MM:SS'.
-	- `arrival_time`: (Optional) The time of arrival in format 'YYYY-MM-DD HH:MM:SS'.
-	- `vehicle_id`: (Optional) The ID of the vehicle.
-	- `driver_id`: (Optional) The ID of the driver.
-	- `status`: (Optional) The status of the transportation trip (SCHEDULED/DEPARTED/ONGOING/ARRIVED).
+	- `route_name`: (Required) The name of the route.
+	- `departure_location`: (Required) The name of the departure location.
+	- `arrival_location`: (Required) The name of the arrival location.
+	- `departure_time`: (Required) The time of departure in format 'YYYY-MM-DD HH:MM:SS'.
+	- `arrival_time`: (Required) The time of arrival in format 'YYYY-MM-DD HH:MM:SS'.
+	- `vehicle_id`: (Required) The ID of the vehicle.
+	- `driver_id`: (Required) The ID of the driver.
+	- `status`: (Required) The status of the transportation trip (SCHEDULED/DEPARTED/ONGOING/ARRIVED).
 		
 	Returns the schedule's information if added.
 	If the schedule already exists, it returns a message indicating the schedule exists.
@@ -269,6 +269,16 @@ async def update_original_schedule(schedule_id: int, schedules: TransportSchedul
 	if 'departure_time' in schedules_dict:
 		try:
 			datetime.strptime(schedules_dict["departure_time"], '%Y-%m-%d %H:%M:%S')
+		except ValueError:
+			raise HTTPException(
+			status_code=400, 
+			detail="Incorrect time format. It should be 'YYYY-MM-DD HH:MM:SS'."
+		)
+		
+    # datetime format validation
+	if 'arrival_time' in schedules_dict:
+		try:
+			datetime.strptime(schedules_dict["arrival_time"], '%Y-%m-%d %H:%M:%S')
 		except ValueError:
 			raise HTTPException(
 			status_code=400, 
