@@ -79,8 +79,6 @@ async def read_uni(current_user: User = Depends(get_current_active_user)):
 	response = getUni(token)
 	return (response)
 
-@app.post
-
 @app.get('/search')
 async def search_schedule(
 	route_name: str = None,
