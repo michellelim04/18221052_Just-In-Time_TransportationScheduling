@@ -10,7 +10,7 @@ tags_metadata = [
 		  "description" : "This route of Driver's Directory allows you to Search, Get, Add, Update, and Delete Drivers' Data."},
 	  {
 		  "name" : "schedule",
-		  "description" : "This route of Transportation Scheduling is already integrated with U-Canteen API and allows you to Search, Get, Add, Update, and Delete Schedules' Data. This API calculates the distance between the departure and arrival location to estimate the arrival time hence ensuring Just-In-Time Delivery from Listed Restaurants to Universities by Motorcycle."},
+		  "description" : "This route of Transportation Scheduling is already integrated with U-Canteen API and allows you to Search, Get, Add, Update, and Delete Schedules' Data. To start, you can first display the list of universities and restaurants. Then, you can make a schedule based on that. The display of restaurants also shows the closest university to the restaurant for you to consider. This API calculates the distance between the departure and arrival location to estimate the arrival time hence ensuring Just-In-Time Delivery from Listed Restaurants to Universities by Motorcycle."},
 
 	  {
 		  "name" : "vehicle",
