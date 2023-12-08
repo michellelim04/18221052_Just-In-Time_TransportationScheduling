@@ -57,6 +57,30 @@ async def read_all_schedule(current_user: User = Depends(get_current_active_user
 		data = json.load(read_file)
 	return data['schedule']
 
+@app.get('/listresto')
+async def read_resto(current_user: User = Depends(get_current_active_user)):
+	"""
+	Displays the list of restaurants to get the food from !
+	"""
+	token = loginOtherAPI()
+		
+	# get arrival coordinate
+	response = getResto(token)
+	return (response)
+
+@app.get('/listuni')
+async def read_uni(current_user: User = Depends(get_current_active_user)):
+	"""
+	Displays the list of universities to send the food to !
+	"""
+	token = loginOtherAPI()
+		
+	# get arrival coordinate
+	response = getUni(token)
+	return (response)
+
+@app.post
+
 @app.get('/search')
 async def search_schedule(
 	route_name: str = None,
@@ -483,3 +507,25 @@ def getETA (departure_time, duration):
 	departure_time = datetime.strptime(departure_time, "%Y-%m-%d %H:%M:%S")
 	arrival_time = departure_time+timedelta(seconds=duration)
 	return arrival_time.strftime("%Y-%m-%d %H:%M:%S")
+
+def getResto (token):
+	url = "http://ucanteen2.g3cwh8fvd9frdmeg.southeastasia.azurecontainer.io/admin/restaurants/all"
+	
+	# Add the token to the header of the request
+	headers = {"Authorization" : "Bearer " + token}
+
+	# Make the request
+	response = requests.get(url, headers=headers)
+
+	return response.json()
+
+def getUni (token):
+	url = "http://ucanteen2.g3cwh8fvd9frdmeg.southeastasia.azurecontainer.io/admin/univeristy/all"
+	
+	# Add the token to the header of the request
+	headers = {"Authorization" : "Bearer " + token}
+
+	# Make the request
+	response = requests.get(url, headers=headers)
+
+	return response.json()
